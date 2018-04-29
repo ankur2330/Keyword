@@ -1,41 +1,57 @@
 package executionEngine;
 
+import java.io.FileInputStream;
+import java.lang.reflect.Method;
+import java.util.Properties;
+
 import config.ActionKeywords;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import config.Constants;
 import utility.ExcelUtils;
 
 public class DriverScript {
 
-    public static WebDriver driver = null;
+    public static Properties OR;
+    public static ActionKeywords actionKeywords;
+    public static String sActionKeyword;
+    public static String sPageObject;
+    public static Method method[];
 
-    public static void main(String args[]) throws Exception {
+    public DriverScript() throws NoSuchMethodException, SecurityException{
+        actionKeywords = new ActionKeywords();
+        method = actionKeywords.getClass().getMethods();
+    }
 
-        String sPath = "/home/achaudhary/Ideaprojects/Keyword/DataEngine.xlsx";
+    public static void main(String[] args) throws Exception {
 
-        ExcelUtils.setExcelFile(sPath,"Test");
+        String Path_DataEngine = Constants.Path_TestData;
+        ExcelUtils.setExcelFile(Path_DataEngine, Constants.Sheet_TestSteps);
 
-        for(int iRow=1;iRow<9;iRow++){
-            String sActionKeyword = ExcelUtils.getCellData(iRow,3);
-            if(sActionKeyword.equals("openBrowser")){
-                ActionKeywords.openBrowser();
-            }
-            else if (sActionKeyword.equals("navigate")){
-                ActionKeywords.navigate();
-            }
-            else if(sActionKeyword.equals("click_MyAccount")){
-                ActionKeywords.click_Myaccount();}
-            else if(sActionKeyword.equals("input_Username")){
-                ActionKeywords.input_Username();}
-            else if(sActionKeyword.equals("input_Password")){
-                ActionKeywords.input_Password();}
-            else if(sActionKeyword.equals("click_Login")){
-                ActionKeywords.clik_Login();}
-            else if(sActionKeyword.equals("closeBrowser")){
-                ActionKeywords.closeBrowser();}
+        //Declaring String variable for storing Object Repository path
+        String Path_OR = Constants.Path_OR;
+        //Creating file system object for Object Repository text/property file
+        FileInputStream fs = new FileInputStream(Path_OR);
+        //Creating an Object of properties
+        OR= new Properties(System.getProperties());
+        //Loading all the properties from Object Repository property file in to OR object
+        OR.load(fs);
 
+
+        for (int iRow=1;iRow<=9;iRow++){
+            sActionKeyword = ExcelUtils.getCellData(iRow, Constants.Col_ActionKeyword);
+            sPageObject = ExcelUtils.getCellData(iRow, Constants.Col_PageObject);
+            execute_Actions();
         }
+    }
 
+    private static void execute_Actions() throws Exception {
+
+        for(int i=0;i<method.length;i++){
+            if(method[i].getName().equals(sActionKeyword)){
+                //This is to execute the method or invoking the method
+                //Passing 'Page Object' name and 'Action Keyword' as Arguments to this method
+                method[i].invoke(actionKeywords,sPageObject);
+                break;
+            }
+        }
     }
 }

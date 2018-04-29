@@ -6,38 +6,28 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class ActionKeywords {
 
-    public static WebDriver driver = null;
+    public static WebDriver driver;
 
-    public static void openBrowser(){
+    public static void openBrowser(String object){
             driver = new FirefoxDriver();
-
     }
-
-    public static void navigate(){
-        driver.get("http://www.store.demoqa.com");
+    public static void navigate(String Object){
+      driver.get(Constants.URL);
+   }
+    public static void click(String object){
+        driver.findElement(OR.getProperty(object)).click();
     }
-
-
-    public static void click_Myaccount(){
-        driver.findElement(By.xpath(".//*[@id='account']/a")).click();
-
+    public static void input_Username(String Object){
+        driver.findElement(By.id("log")).sendKeys(Constants.UserName);
     }
-
-    public static void input_Username(){
-        driver.findElement(By.id("log")).sendKeys("Testuser");
-
+    public static void input_Password(String Object){
+        driver.findElement(By.id("pwd")).sendKeys(Constants.Password);
     }
+    public static void click_Login(String Object){
 
-    public static void input_Password(){
-        driver.findElement(By.id("pwd")).sendKeys("Test@123");
-
-    }
-
-    public static void clik_Login(){
         driver.findElement(By.id("login")).click();
     }
-
-    public static void closeBrowser(){
+    public static void closeBrowser(String Object){
         driver.quit();
     }
 
